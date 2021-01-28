@@ -39,28 +39,23 @@ function doGet(e) {
 function doPost(e) {
   try {
     // this is where telegram works
-    var data = JSON.parse(e.postData.contents);
-  
+    var data = JSON.parse(e.postData.contents); 
+    // sendText(id,JSON.stringify(data));
+
     var chatId = data.message.chat.id;
     chatId = chatId.toString();  // 转str
     var chatTitle = data.message.chat.title;
     var id = data.message.from.id;  //发信人id
-    var name = data.message.from.first_name + " " + (data.message.from.last_name==undefined?data.message.from.last_name:"");  //发信人名字
+    var name = data.message.from.first_name + " " + (data.message.from.last_name==undefined?"":data.message.from.last_name);  //发信人名字
 
     var text = data.message.text; //文本消息
     var document = data.message.document; //文件消息
 
     if(document){
-      // sendText(id, JSON.stringify(document))
       
       var fileType = document.mime_type;
       var fileName = document.file_name;
       var fileSize = document.file_size;
-
-      // sendText(id,fileType)
-      // sendText(id,chatId)
-      // sendText(id,groupIdArray.indexOf(chatId))
-      // sendText(id,fileTypeArray.indexOf(fileType))
 
       // 群内上传，epub，则收录。并发私人消息给上传人，通知是否成功。
       if(groupIdArray.indexOf(chatId)>=0 && fileTypeArray.indexOf(fileType)>=0){
@@ -86,7 +81,7 @@ function doPost(e) {
         }else if(searchCount==1){
           sendText(id, fileName + " 收录完成");
         }else{
-          sendText(id, fileName + " 重复收录，前往 https://docs.google.com/spreadsheets/d/1r1DRL4j1mHxWJENU6zINZnGo6bkq2KRBdq5AJ_C9prs/edit#gid=1339131739 查看")
+          sendText(id, fileName + " 重复收录，前往查看 https://docs.google.com/spreadsheets/d/xxx/edit#")
         }
         
       }
@@ -100,19 +95,15 @@ function doPost(e) {
       }
       // 欢迎
     }
-    // var answer = "Hi " + name;
-    // sendText(id,answer);
-    // sendText(id,text);
-    // sendText(id,JSON.stringify(data));
      
   } catch(e) {
-    sendText(adminId, JSON.stringify(e,null,4));
+    sendText(id, JSON.stringify(e,null,4));
   }
 }
 
 function sliceNameType(fileName){
   // 返回文件名和后缀名
-  // 目前没必要，以后多文件格式可能用到（文件名相同，但是格式不同）
+  // 目前没必要，以后多文件格式可能用到（文件名相同，但是格式不同，可以给出提示）
 
   var dotPos = fileName.lastIndexOf('.');
   var fileNameText = fileName.substring(0,dotPos);
